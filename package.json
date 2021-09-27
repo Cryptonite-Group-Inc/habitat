@@ -1,0 +1,8 @@
+{
+  "name": "habitat",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/mishkatoken/habitat.git",
+  "author": "Grisha",
+  "license": "MIT"
+}
