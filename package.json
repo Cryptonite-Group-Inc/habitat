@@ -4,5 +4,11 @@
   "main": "index.js",
   "repository": "https://github.com/mishkatoken/habitat.git",
   "author": "Grisha",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.3.2",
+    "@truffle/hdwallet-provider": "1.2.3",
+    "dotenv": "^10.0.0",
+    "truffle-plugin-verify": "^0.5.15"
+  }
 }
