@@ -22,5 +22,8 @@ contract Habitats is ERC721Namable, Ownable {
         return "https://ipfs.io/ipfs/QmZ1Wm9mzeVkLUwJ6jL7UBzwGkJsnpMQpNNmP7G8REF1Ci/";
     }
 
-
+    function mint(uint256 _tokenId, uint256 _genes, bytes calldata _sig) external {
+		require(keccak256(abi.encodePacked(id, _genes)).toEthSignedMessageHash().recover(_sig) == SIGNER, "Sig not valid");
+		_mint(msg.sender, id);
+	}
 }
