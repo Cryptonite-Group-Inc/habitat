@@ -20,7 +20,12 @@ contract Habitats is ERC721Namable, Ownable {
     uint256 public bebeCount;
 
     mapping(uint256 => Breeding) public habitat;
-    
+
+    // Events
+	event HabitatIncubated (uint256 tokenId, uint256 matron, uint256 sire);
+	event HabitatBorn(uint256 tokenId, uint256 genes);
+	event HabitatAscended(uint256 tokenId, uint256 genes);
+
     constructor() public ERC721Namable("Habitats", "CAT", [], []) {
 		
 	}
@@ -37,6 +42,8 @@ contract Habitats is ERC721Namable, Ownable {
     function mint(uint256 _tokenId, uint256 _genes, bytes calldata _sig) external {
 		require(keccak256(abi.encodePacked(id, _genes)).toEthSignedMessageHash().recover(_sig) == SIGNER, "Sig not valid");
 		_mint(msg.sender, id);
+
+        emit HabitatAscended(id, _genes);
 	}
 
     function setBreedingManager(address _manager) external onlyOwner {
@@ -51,6 +58,8 @@ contract Habitats is ERC721Namable, Ownable {
 		uint256 id = 1000 + bebeCount;
 		habitat[id] = habitat(0, 0, block.timestamp, false);
 		_mint(msg.sender, id);
+
+        emit HabitatIncubated(id, _matron, _sire);
 	}
 
 	function evolve(uint256 _tokenId) external {
@@ -60,5 +69,7 @@ contract Habitats is ERC721Namable, Ownable {
 
 		uint256 genes = breedManager.tryEvolve(_tokenId);
 		habitat.genes = genes;
+
+        emit HabitatBorn(_tokenId, genes);
 	}
 }
