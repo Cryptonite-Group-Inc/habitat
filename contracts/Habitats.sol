@@ -9,15 +9,18 @@ import "./ERC721Namable.sol";
 
 contract Habitats is ERC721Namable, Ownable {
     // mapping to breeding information
-    struct Breeding {
+    struct Habitat {
+        uint256 breed_price;
+		uint256 genes;
+		uint256 bornAt;
         bool enabled;
-        uint256 price;
-    }
+	}
 
     IBreedManager breedManager;
+    uint256 public bebeCount;
 
-    mapping(uint256 => Breeding) public breeding;
-
+    mapping(uint256 => Breeding) public habitat;
+    
     constructor() public ERC721Namable("Habitats", "CAT", [], []) {
 		
 	}
@@ -38,5 +41,24 @@ contract Habitats is ERC721Namable, Ownable {
 
     function setBreedingManager(address _manager) external onlyOwner {
 		breedManager = IBreedManager(_manager);
+	}
+
+    function breed(uint256 _sire, uint256 _matron) external {
+		require(ownerOf(_sire) == msg.sender && ownerOf(_matron) == msg.sender);
+		require(breedManager.tryBreed(_sire, _matron));
+
+		bebeCount++;
+		uint256 id = 1000 + bebeCount;
+		habitat[id] = habitat(0, 0, block.timestamp, false);
+		_mint(msg.sender, id);
+	}
+
+	function evolve(uint256 _tokenId) external {
+		require(ownerOf(_tokenId) == msg.sender);
+		Habitat storage habitat = habitat[_tokenId];
+		require(habitat.genes == 0);
+
+		uint256 genes = breedManager.tryEvolve(_tokenId);
+		habitat.genes = genes;
 	}
 }
