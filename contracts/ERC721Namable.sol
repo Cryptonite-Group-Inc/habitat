@@ -1,4 +1,4 @@
-import "@openzeppelin/contracts/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 contract ERC721Namable is ERC721 {
 

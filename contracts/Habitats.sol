@@ -18,19 +18,20 @@ contract Habitats is ERC721Namable, Ownable {
 
     IBreedManager breedManager;
     uint256 public bebeCount;
+	address constant public SIGNER = address(0x5Ba587a9927d5fAC115CC0154045B29CB4Df2839);
 
-    mapping(uint256 => Breeding) public habitat;
+    mapping(uint256 => Habitat) public habitat;
 
     // Events
 	event HabitatIncubated (uint256 tokenId, uint256 matron, uint256 sire);
 	event HabitatBorn(uint256 tokenId, uint256 genes);
 	event HabitatAscended(uint256 tokenId, uint256 genes);
 
-    constructor() public ERC721Namable("Habitats", "CAT", [], []) {
+    constructor(string[] memory _names, uint256[] memory _ids) public ERC721Namable("Habitats", "CAT", _names, _ids) {
 		
 	}
 
-    function _baseURI() internal view virtual returns (string memory) {
+    function _baseURI() internal view override virtual returns (string memory) {
         return "https://ipfs.io/ipfs/QmZ1Wm9mzeVkLUwJ6jL7UBzwGkJsnpMQpNNmP7G8REF1Ci/";
     }
 
@@ -40,10 +41,10 @@ contract Habitats is ERC721Namable, Ownable {
         species (1) | gender (1) | background (2) | background color (3) | Outline color (3) | inline color (3) | eye (2) | mouth (3) | accessory (4) | reservatuib
      */
     function mint(uint256 _tokenId, uint256 _genes, bytes calldata _sig) external {
-		require(keccak256(abi.encodePacked(id, _genes)).toEthSignedMessageHash().recover(_sig) == SIGNER, "Sig not valid");
-		_mint(msg.sender, id);
+		require(keccak256(abi.encodePacked(_tokenId, _genes)).toEthSignedMessageHash().recover(_sig) == SIGNER, "Sig not valid");
+		_mint(msg.sender, _tokenId);
 
-        emit HabitatAscended(id, _genes);
+        emit HabitatAscended(_tokenId, _genes);
 	}
 
     function setBreedingManager(address _manager) external onlyOwner {
@@ -56,7 +57,7 @@ contract Habitats is ERC721Namable, Ownable {
 
 		bebeCount++;
 		uint256 id = 1000 + bebeCount;
-		habitat[id] = habitat(0, 0, block.timestamp, false);
+		habitat[id] = Habitat(0, 0, block.timestamp, false);
 		_mint(msg.sender, id);
 
         emit HabitatIncubated(id, _matron, _sire);
